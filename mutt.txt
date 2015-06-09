@@ -1,0 +1,2 @@
+mutt -s "[75d9c1b2b032] Task 05 of the Eudyptula Challenge" -a hello-world.c -a usb-keyboard-hotplug.txt -- little@eudyptula-challenge.org
+

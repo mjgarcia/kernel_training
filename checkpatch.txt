@@ -1,0 +1,1 @@
+~/git/linux/scripts/checkpatch.pl --no-tree -f /home/mauricio/Developer/kernel_training/hello-world-misc-char-driver/hello-world.c
