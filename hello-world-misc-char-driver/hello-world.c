@@ -20,7 +20,7 @@ size_t length, loff_t *offset)
 		return -ENOMEM;
 
 	if (copy_to_user(buffer, msg, len) != 0)
-		return -ENOMEM;
+		return -EFAULT;
 
 	*offset = len;
 	return len;
