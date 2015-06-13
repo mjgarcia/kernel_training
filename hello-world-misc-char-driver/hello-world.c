@@ -5,34 +5,20 @@
 
 MODULE_LICENSE("GPL");
 
+static const char *msg = "75d9c1b2b032";
+static const size_t len_msg = 12;
+
 static ssize_t device_read(struct file *filp, char *buffer,
 size_t length, loff_t *offset)
 {
-	const char *msg = "75d9c1b2b032";
-	const size_t len = strlen(msg);
-
-	/* We have copied the whole message*/
-	if (*offset == len)
-		return 0;
-
-	/* Buffer is not big enough */
-	if (length < len)
-		return -ENOMEM;
-
-	if (copy_to_user(buffer, msg, len) != 0)
-		return -EFAULT;
-
-	*offset = len;
-	return len;
+	return *offset == len_msg ? 0 :
+		(*offset = (len_msg - copy_to_user(buffer, msg, len_msg)));
 }
 
 static ssize_t device_write(struct file *filp, const char *buffer,
 size_t length, loff_t *off)
 {
-	const char *msg = "75d9c1b2b032";
-	const size_t len = strlen(msg);
-
-	if (len != length)
+	if (len_msg != length)
 		return -EINVAL;
 
 	if (strncmp(buffer, msg, length) != 0)
