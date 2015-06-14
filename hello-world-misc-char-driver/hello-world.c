@@ -11,8 +11,7 @@ static const size_t len_msg = 12;
 static ssize_t device_read(struct file *filp, char *buffer,
 size_t length, loff_t *offset)
 {
-	return *offset == len_msg ? 0 :
-		(*offset = (len_msg - copy_to_user(buffer, msg, len_msg)));
+	return simple_read_from_buffer(buffer, length, offset, msg, len_msg);
 }
 
 static ssize_t device_write(struct file *filp, const char *buffer,
