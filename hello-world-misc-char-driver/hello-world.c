@@ -2,6 +2,7 @@
 #include <linux/miscdevice.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
+#include <linux/slab.h>
 
 MODULE_LICENSE("GPL");
 
@@ -20,7 +21,12 @@ size_t length, loff_t *off)
 	if (len_msg != length)
 		return -EINVAL;
 
-	if (strncmp(buffer, msg, length) != 0)
+	char *kbuff = kmalloc(len_msg, GFP_KERNEL);
+
+	if (copy_from_user(kbuff, buffer, len_msg) != 0)
+		return -EFAULT;
+
+	if (strncmp(kbuff, msg, len_msg) != 0)
 		return -EINVAL;
 
 	return length;
