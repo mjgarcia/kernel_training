@@ -23,7 +23,13 @@ size_t length, loff_t *off)
 
 	char *kbuff = kmalloc(len_msg, GFP_KERNEL);
 
-	if (copy_from_user(kbuff, buffer, len_msg) != 0)
+	if (!kbuff)
+		return -ENOMEM;
+
+	ssize_t count = simple_write_to_buffer(kbuff, len_msg, off,
+		buffer, length);
+
+	if (count != length)
 		return -EFAULT;
 
 	if (strncmp(kbuff, msg, len_msg) != 0)
