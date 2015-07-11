@@ -4,6 +4,7 @@
 #include <asm/uaccess.h>
 #include <linux/slab.h>
 #include <linux/debugfs.h>
+#include <linux/jiffies.h>
 
 MODULE_LICENSE("GPL");
 
@@ -52,6 +53,20 @@ const struct file_operations id_fops = {
 	.write = device_write,
 };
 
+static ssize_t read_jiffies(struct file *filp, char *buffer,
+	size_t length, loff_t *offset)
+{
+	int len = 32;
+	char buf[len];
+	int res = scnprintf(buf, len, "%lu\n", jiffies);
+
+	return simple_read_from_buffer(buffer, length, offset, buf, res);
+}
+
+const struct file_operations jiffies_fops = {
+	.read = read_jiffies
+};
+
 static int __init my_init_module(void)
 {
 	pr_info("Hello World!");
@@ -64,6 +79,13 @@ static int __init my_init_module(void)
 
 	id_file = debugfs_create_file("id", 0666, dir, NULL,  &id_fops);
 	if (!id_file)
+		return -EPERM;
+
+	struct dentry *jiffies_file = NULL;
+
+	jiffies_file = debugfs_create_file("jiffies", 0444, dir, NULL,
+		&jiffies_fops);
+	if (!jiffies_file)
 		return -EPERM;
 
 	return 0;
