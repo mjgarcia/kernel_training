@@ -45,6 +45,12 @@ static ssize_t jiffies_show(struct kobject *kobj, struct kobj_attribute *attr,
 	return snprintf(buf, PAGE_SIZE, "%lu", jiffies);
 }
 
+static ssize_t jiffies_store(struct kobject *kobj, struct kobj_attribute *attr,
+	const char *buf, size_t count)
+{
+	return -EINVAL;
+}
+
 static ssize_t foo_show(struct kobject *kobj, struct kobj_attribute *attr,
 	char *buf)
 {
@@ -75,20 +81,11 @@ static ssize_t foo_store(struct kobject *kobj, struct kobj_attribute *attr,
 	return res;
 }
 
-static struct kobj_attribute id_attribute =
-	__ATTR(id, 0666, id_show, id_store);
+static struct kobj_attribute id_attribute = __ATTR_RW(id);
 
-static struct kobj_attribute foo_attribute =
-	__ATTR(foo, 0644, foo_show, foo_store);
+static struct kobj_attribute foo_attribute = __ATTR_RW(foo);
 
-static struct kobj_attribute jiffies_attribute = {
-	.attr = {
-		.name = "jiffies",
-		.mode = 0444,
-	},
-	.show = jiffies_show,
-	.store = NULL,
-};
+static struct kobj_attribute jiffies_attribute = __ATTR_RO(jiffies);
 
 static struct attribute *attrs[] = {
 	&id_attribute.attr,
